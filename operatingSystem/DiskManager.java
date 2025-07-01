@@ -24,6 +24,7 @@ public class DiskManager {
     public int getTotalSpace() { return totalSpace; }
     public int getOccupiedSpace() { return occupiedSpace; }
     public Process getProcessById(int id) { return storage.get(id); }
+    public boolean hasSpace(int size) { return occupiedSpace + size <= totalSpace; }
 
     // Methods
     public boolean storeProcess(Process process) {

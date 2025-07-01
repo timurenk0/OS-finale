@@ -8,6 +8,7 @@ import java.util.Queue;
 public class RAMManager {
     private final Map<Integer, Page> memory;
     private final Queue<Page> pageQueue;
+    private final Map<Integer, Long> pageAccessTimes;
     private final int totalSpace;
     private int occupiedSpace;
     private final DiskManager disk;
@@ -16,6 +17,7 @@ public class RAMManager {
     public RAMManager(int totalSpace, DiskManager disk) {
         this.memory = new HashMap<>();
         this.pageQueue = new LinkedList<>();
+        this.pageAccessTimes = new HashMap<>();
         this.occupiedSpace = 512; // assume OS is occupying RAM
         if (totalSpace > occupiedSpace) {
             this.totalSpace = totalSpace;
@@ -42,14 +44,17 @@ public class RAMManager {
     // Methods
     public boolean addPage(Page page) {
         if (occupiedSpace + Page.getPageSize() > totalSpace) {
-            if (!kickPage()) {
-                System.out.println("[ERROR_RAM] Failed to kick page to make space for page " + page.getId());
-                return false;
+            while (!kickPage()) {
+                if (!disk.hasSpace(Page.getPageSize())) {
+                    System.out.println("[ERROR_RAM] Failed to kick page to make space for page " + page.getId());
+                    return false;
+                }
             }
         }
 
         if (memory.containsKey(page.getId())) {
             System.out.println("[RAM] Page " + page.getId() + " is already in the memory");
+            updateAccessTime(page);
             return true;
         }
 
@@ -63,9 +68,12 @@ public class RAMManager {
         pageQueue.add(page);
         occupiedSpace += Page.getPageSize();
         page.setInRam(true);
+        updateAccessTime(page);
         System.out.println("[RAM] Page " + page.getId() + " added successfully (" + Page.getPageSize() + " bytes in " + page.getExecTime() + "ms)");
         return true;
     }
+
+    private void updateAccessTime(Page page) { pageAccessTimes.put(page.getId(), System.currentTimeMillis()); }
 
     public boolean kickPage() {
         if (pageQueue.isEmpty()) {
@@ -73,18 +81,34 @@ public class RAMManager {
             return false;
         }
 
-        Page kickedPage = pageQueue.poll();
+        Page LRUPage = null;
+        long oldTime = Long.MAX_VALUE;
+        for (Page page : pageQueue) {
+            long lastAccess = pageAccessTimes.getOrDefault(page.getId(), 0L);
 
-        // Swap page to HDD
-        if (!disk.storePage(kickedPage)) {
-            System.out.println("[ERROR_RAM] Failed to swap page " + kickedPage.getId());
+            if (lastAccess < oldTime) {
+                oldTime = lastAccess;
+                LRUPage = page;
+            }
+        }
+
+        if (LRUPage == null) { return false; }
+
+        Map<Integer, Page> pages = disk.getProcessById(LRUPage.getParentProcess().getId()).getPages();
+
+        if (pages.containsKey(LRUPage.getId())) {
+            System.out.println("[RAM] Page " + LRUPage.getId() + " is already in the memory");
+        } else if (!disk.storePage(LRUPage)) {
+            System.out.println("[ERROR_RAM] Failed to swap page " + LRUPage.getId());
             return false;
         }
 
-        memory.remove(kickedPage.getId());
+        memory.remove(LRUPage.getId());
+        pageQueue.remove(LRUPage);
         occupiedSpace -= Page.getPageSize();
-        kickedPage.setInRam(false);
-        System.out.println("[RAM] Page " + kickedPage.getId() + " kicked successfully");
+        LRUPage.setInRam(false);
+        pageAccessTimes.remove(LRUPage.getId());
+        System.out.println("[RAM] Page " + LRUPage.getId() + " kicked successfully");
         return true;
     }
 
@@ -93,6 +117,7 @@ public class RAMManager {
         Page page = memory.get(pageId);
 
         if (page != null) {
+            updateAccessTime(page);
             System.out.println("[RAM] Page " + pageId + " is already in the RAM");
             return page;
         }
@@ -131,6 +156,7 @@ public class RAMManager {
             if (pageQueue.remove(page)) {
                 occupiedSpace -= Page.getPageSize();
                 page.setInRam(false);
+                pageAccessTimes.remove(pageId);
                 pagesRemoved++;
             }
         }
