@@ -30,6 +30,7 @@ public class Process {
     public State getState() { return state; }
     public HashMap<Integer, Page> getPages() { return pages; }
     public Set<Integer> getExecutedPages() { return executedPages; }
+    public boolean isAllPagesExecuted() { return executedPages.size() == pages.size(); }
 
     // Setters
     public void setState(State state) { this.state = state; }
@@ -48,5 +49,12 @@ public class Process {
             pages.put(id*10000+i+1, new Page(id*10000+i+1, payload, this));
         }
         System.out.println("[PROCESS] Created process " + id + " with " + numOfPages + " pages (" + size + " bytes)");
+    }
+
+
+    // Helper
+    @Override
+    public String toString() {
+        return "Process | PID " + id + " | STATE <" + state + "> | PAGES " + pages.size() + "\n";
     }
 }

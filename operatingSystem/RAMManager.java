@@ -27,6 +27,10 @@ public class RAMManager {
     }
 
     // Getters
+    public Map<Integer, Page> getMemory() {
+        return memory;
+    }
+
     public int getTotalSpace() {
         return totalSpace;
     }
