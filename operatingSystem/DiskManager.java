@@ -27,6 +27,7 @@ public class DiskManager {
 
     // Methods
     public boolean storeProcess(Process process) {
+        // true process size is the total size of all pages
         int processSize = process.getPages().size() * Page.getPageSize();
         if (occupiedSpace + processSize > totalSpace) {
             System.out.println("[ERROR_HDD] Failed to store process. Not enough space");
