@@ -67,7 +67,7 @@ public class Scheduler {
 
                     ram.removeProcess(process.getId()); // kick process from RAM
                     processQueue.remove(process); // kick process from process queue
-                    process.setState(Process.State.READY); // set process state READY so it can be executed again
+                    process.setState(Process.State.NEW); // set process state NEW so it can be executed again
                     process.clearExecutedPages(); // set all pages of the process to non-executed
                 }
                 break;
