@@ -15,7 +15,7 @@ public class DiskManager {
         if (totalSpace > this.occupiedSpace) {
             this.totalSpace = totalSpace;
         } else {
-            System.out.println("Total space cannot be less than occupied space (2048 bytes). Automatically assigned 16384 bytes");
+            System.out.println("[WARNING_HDD] Total space cannot be less than occupied space (2048 bytes). Automatically assigned 16384 bytes");
             this.totalSpace = 16384;
         }
     }

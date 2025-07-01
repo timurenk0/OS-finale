@@ -12,7 +12,7 @@ public class Page {
 
     // Constructor
     public Page(int id, byte[] payload, Process parentProcess) {
-        this.EXEC_TIME = new Random().nextInt(16) + 2;
+        this.EXEC_TIME = new Random().nextInt(10) + 1;
         this.id = id;
         this.parentProcess = parentProcess;
         this.payload = payload;

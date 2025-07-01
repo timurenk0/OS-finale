@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
-public class RAMManger {
+public class RAMManager {
     private final Map<Integer, Page> memory;
     private final Queue<Page> pageQueue;
     private final int totalSpace;
@@ -13,14 +13,14 @@ public class RAMManger {
     private final DiskManager disk;
 
     // Constructor
-    public RAMManger(int totalSpace, DiskManager disk) {
+    public RAMManager(int totalSpace, DiskManager disk) {
         this.memory = new HashMap<>();
         this.pageQueue = new LinkedList<>();
         this.occupiedSpace = 512; // assume OS is occupying RAM
         if (totalSpace > occupiedSpace) {
             this.totalSpace = totalSpace;
         } else {
-            System.out.println("Total space cannot be less than occupied space (512 bytes). Automatically assigned 2048 bytes");
+            System.out.println("[WARNING_RAM] Total space cannot be less than occupied space (512 bytes). Automatically assigned 2048 bytes");
             this.totalSpace = 2048;
         }
         this.disk = disk;
