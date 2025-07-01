@@ -21,6 +21,7 @@ public class Page {
     public static int getExecTime() { return EXEC_TIME; }
     public int getId() { return id; }
     public byte[] getPayload() { return payload; }
+    public Process getParentProcess() { return parentProcess; }
     public boolean isInRAM() { return inRAM; }
 
     // Setters

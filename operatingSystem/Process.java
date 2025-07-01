@@ -42,7 +42,7 @@ public class Process {
         int numOfPages = (int) Math.ceil((double) size / Page.getPageSize());
 
         for (int i = 0; i < numOfPages; i++) {
-            String payloadString = String.format("0x%02x", random.nextInt(256)); // Generates random payload for each page
+            String payloadString = String.format("0x%02x", random.nextInt(256)); // generates random payload for each page
             byte[] payload = payloadString.getBytes();
 
             pages.put(id*10000+i+1, new Page(id*10000+i+1, payload, this));
