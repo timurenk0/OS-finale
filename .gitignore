@@ -1,0 +1,41 @@
+# IntelliJ IDEA project files
+.idea/
+*.iml
+*.iws
+
+# IntelliJ workspace.xml file (local settings)
+.idea/workspace.xml
+
+# IntelliJ tasks and usage statistics
+.idea/tasks.xml
+.idea/dictionaries
+.idea/shelf
+
+# User-specific files (local history, caches, logs)
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/vcs.xml
+.idea/jsLibraryMappings.xml
+
+# Build output directories
+out/
+build/
+
+# Compiled class files
+*.class
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Maven / Gradle folders (if using these build tools)
+target/
+.gradle/
+build/
+
+# Other
+*.log
